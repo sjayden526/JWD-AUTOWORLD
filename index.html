@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWD Autoworld Sdn. Bhd. | Quality Pre-Owned Cars in Klang, Selangor</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            800: '#0F172A',
+                            900: '#0B132B',
+                        },
+                        amber: {
+                            500: '#F59E0B',
+                            600: '#D97706',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-effect {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Top Info Bar -->
+    <div class="bg-navy-900 text-gray-300 text-xs py-2 px-4 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2">
+            <div class="flex items-center space-x-4">
+                <span><i class="fa-solid fa-location-dot text-amber-500 mr-1.5"></i>Lot 14991, Batu 5, Kg Johan Setia, Klang</span>
+                <span class="hidden sm:inline"><i class="fa-regular fa-clock text-amber-500 mr-1.5"></i>Mon - Sat: 9:00 AM - 6:30 PM | Sun: 10:00 AM - 5:00 PM</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="tel:+60123456789" class="hover:text-amber-400 transition"><i class="fa-solid fa-phone text-amber-500 mr-1"></i> +60 12-345 6789</a>
+                <a href="https://wa.me/60123456789" target="_blank" class="hover:text-green-400 transition"><i class="fa-brands fa-whatsapp text-green-500 text-sm mr-1"></i> WhatsApp Us</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <header class="sticky top-0 z-40 bg-navy-800/95 text-white backdrop-blur shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="bg-amber-500 text-navy-900 font-extrabold text-2xl px-3 py-1.5 rounded-lg tracking-wider shadow">
+                        JWD
+                    </div>
+                    <div>
+                        <div class="font-bold text-xl tracking-tight leading-none text-white">AUTOWORLD</div>
+                        <div class="text-[10px] text-gray-400 tracking-widest uppercase mt-0.5">SDN. BHD. • Klang</div>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-8 font-medium text-sm">
+                    <a href="#home" class="hover:text-amber-400 transition text-amber-400">Home</a>
+                    <a href="#inventory" class="hover:text-amber-400 transition">Car Inventory</a>
+                    <a href="#calculator" class="hover:text-amber-400 transition">Loan Calculator</a>
+                    <a href="#tradein" class="hover:text-amber-400 transition">Sell / Trade-In</a>
+                    <a href="#why-us" class="hover:text-amber-400 transition">Why Choose Us</a>
+                    <a href="#contact" class="hover:text-amber-400 transition">Contact Us</a>
+                </nav>
+
+                <!-- Action Button -->
+                <div class="hidden lg:flex items-center space-x-3">
+                    <a href="https://wa.me/60123456789?text=Hi%20JWD%20Autoworld,%20I%20would%20like%20to%20inquire%20about%20a%20car." target="_blank" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold px-5 py-2.5 rounded-lg shadow-md transition transform hover:-translate-y-0.5 flex items-center">
+                        <i class="fa-brands fa-whatsapp text-lg mr-2"></i> WhatsApp Sales
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-navy-900 border-t border-gray-800 px-4 pt-2 pb-4 space-y-2 text-sm font-medium">
+            <a href="#home" class="block py-2 text-amber-400">Home</a>
+            <a href="#inventory" class="block py-2 hover:text-amber-400">Car Inventory</a>
+            <a href="#calculator" class="block py-2 hover:text-amber-400">Loan Calculator</a>
+            <a href="#tradein" class="block py-2 hover:text-amber-400">Sell / Trade-In</a>
+            <a href="#why-us" class="block py-2 hover:text-amber-400">Why Choose Us</a>
+            <a href="#contact" class="block py-2 hover:text-amber-400">Contact Us</a>
+            <a href="https://wa.me/60123456789" target="_blank" class="block text-center bg-amber-500 text-navy-900 font-bold py-2.5 rounded-lg mt-3">
+                <i class="fa-brands fa-whatsapp mr-1"></i> Instant WhatsApp
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative bg-navy-900 text-white py-16 md:py-24 overflow-hidden">
+        <!-- Background Overlay Image -->
+        <div class="absolute inset-0 z-0 opacity-20 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=1600');"></div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-12 gap-12 items-center">
+                <div class="md:col-span-7 space-y-6 text-center md:text-left">
+                    <div class="inline-flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>100% Quality Inspected Pre-Owned Cars</span>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                        Your Trusted Partner for <span class="text-amber-400">Quality Used Cars</span> in Klang
+                    </h1>
+                    <p class="text-gray-300 text-base sm:text-lg max-w-2xl leading-relaxed">
+                        Drive home your dream Honda, Toyota, Perodua, or Proton with peace of mind. Fast loan approvals, full loan options, and 100+ points PUSPAKOM verified condition.
+                    </p>
+
+                    <div class="flex flex-wrap gap-3 justify-center md:justify-start pt-2">
+                        <a href="#inventory" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold px-6 py-3.5 rounded-lg shadow-lg transition transform hover:-translate-y-0.5">
+                            Browse All Inventory
+                        </a>
+                        <a href="#tradein" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-6 py-3.5 rounded-lg border border-gray-700 shadow-md transition">
+                            Value Your Trade-In
+                        </a>
+                    </div>
+
+                    <!-- Trust Signals -->
+                    <div class="pt-6 border-t border-gray-800 grid grid-cols-3 gap-4 text-center md:text-left">
+                        <div>
+                            <div class="text-2xl font-bold text-amber-400">500+</div>
+                            <div class="text-xs text-gray-400">Happy Owners</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-amber-400">100+</div>
+                            <div class="text-xs text-gray-400">Inspection Points</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-amber-400">Fast</div>
+                            <div class="text-xs text-gray-400">Loan Approval</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Filter Box -->
+                <div class="md:col-span-5">
+                    <div class="glass-effect p-6 sm:p-8 rounded-2xl border border-gray-700 shadow-2xl">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                            <i class="fa-solid fa-sliders text-amber-400 mr-2"></i> Find Your Ideal Car
+                        </h3>
+                        <form id="hero-filter-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-300 mb-1">Make / Brand</label>
+                                <select id="hero-make" class="w-full bg-slate-900 border border-gray-700 text-gray-200 text-sm rounded-lg p-3 focus:ring-2 focus:ring-amber-500 outline-none">
+                                    <option value="All">All Brands</option>
+                                    <option value="Perodua">Perodua</option>
+                                    <option value="Proton">Proton</option>
+                                    <option value="Honda">Honda</option>
+                                    <option value="Toyota">Toyota</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-300 mb-1">Body Type</label>
+                                    <select id="hero-body" class="w-full bg-slate-900 border border-gray-700 text-gray-200 text-sm rounded-lg p-3 focus:ring-2 focus:ring-amber-500 outline-none">
+                                        <option value="All">All Types</option>
+                                        <option value="Sedan">Sedan</option>
+                                        <option value="Hatchback">Hatchback</option>
+                                        <option value="SUV">SUV</option>
+                                        <option value="MPV">MPV</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-300 mb-1">Max Budget</label>
+                                    <select id="hero-budget" class="w-full bg-slate-900 border border-gray-700 text-gray-200 text-sm rounded-lg p-3 focus:ring-2 focus:ring-amber-500 outline-none">
+                                        <option value="All">Any Price</option>
+                                        <option value="30000">Under RM 30,000</option>
+                                        <option value="50000">Under RM 50,000</option>
+                                        <option value="80000">Under RM 80,000</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="button" onclick="applyHeroFilter()" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-3.5 rounded-lg shadow transition flex items-center justify-center">
+                                <i class="fa-solid fa-magnifying-glass mr-2"></i> Search Available Cars
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section id="why-us" class="py-16 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="text-3xl font-extrabold text-navy-900">Why Buy From JWD Autoworld?</h2>
+                <p class="text-gray-600 mt-2">We bring honesty, competitive pricing, and peace of mind to your car buying journey.</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="p-6 bg-gray-50 rounded-xl border border-gray-100 hover:shadow-lg transition">
+                    <div class="w-12 h-12 bg-amber-500/10 text-amber-600 rounded-lg flex items-center justify-center text-2xl mb-4 font-bold">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-navy-900 mb-2">100+ Points Checked</h3>
+                    <p class="text-sm text-gray-600">Every car is PUSPAKOM inspected with guaranteed non-accident & non-flood damaged records.</p>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-xl border border-gray-100 hover:shadow-lg transition">
+                    <div class="w-12 h-12 bg-amber-500/10 text-amber-600 rounded-lg flex items-center justify-center text-2xl mb-4 font-bold">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-navy-900 mb-2">Fast Loan Approval</h3>
+                    <p class="text-sm text-gray-600">High approval rate with full loan / zero downpayment options tailored to your income profile.</p>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-xl border border-gray-100 hover:shadow-lg transition">
+                    <div class="w-12 h-12 bg-amber-500/10 text-amber-600 rounded-lg flex items-center justify-center text-2xl mb-4 font-bold">
+                        <i class="fa-solid fa-file-signature"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-navy-900 mb-2">Hassle-Free Transfer</h3>
+                    <p class="text-sm text-gray-600">Complete end-to-end JPJ ownership transfer and insurance arrangements done by our team.</p>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-xl border border-gray-100 hover:shadow-lg transition">
+                    <div class="w-12 h-12 bg-amber-500/10 text-amber-600 rounded-lg flex items-center justify-center text-2xl mb-4 font-bold">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-navy-900 mb-2">Transparent Pricing</h3>
+                    <p class="text-sm text-gray-600">No hidden charges or unexpected surprise add-ons. What you see is what you pay.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inventory Section -->
+    <section id="inventory" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="text-amber-600 font-bold text-sm tracking-wider uppercase">Our Showroom</span>
+                    <h2 class="text-3xl font-extrabold text-navy-900">Featured Vehicles in Stock</h2>
+                </div>
+                <!-- Filter Tabs -->
+                <div class="flex flex-wrap gap-2 text-sm">
+                    <button onclick="filterInventory('All')" class="inv-tab active px-4 py-2 rounded-lg font-semibold bg-navy-900 text-white transition">All Cars</button>
+                    <button onclick="filterInventory('Under30k')" class="inv-tab px-4 py-2 rounded-lg font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Under RM30k</button>
+                    <button onclick="filterInventory('SUV')" class="inv-tab px-4 py-2 rounded-lg font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">SUVs & MPVs</button>
+                    <button onclick="filterInventory('Local')" class="inv-tab px-4 py-2 rounded-lg font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Local (Proton/Perodua)</button>
+                    <button onclick="filterInventory('Japanese')" class="inv-tab px-4 py-2 rounded-lg font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Japanese (Honda/Toyota)</button>
+                </div>
+            </div>
+
+            <!-- Car Grid -->
+            <div id="car-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Cars will be dynamically rendered here via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Loan Calculator Section -->
+    <section id="calculator" class="py-16 bg-navy-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-5 space-y-4">
+                    <span class="text-amber-400 font-bold text-sm tracking-wide uppercase"><i class="fa-solid fa-calculator mr-1"></i> Financial Planning</span>
+                    <h2 class="text-3xl font-extrabold">Car Loan & Monthly Payment Estimator</h2>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        Calculate your estimated monthly installment easily. We partner with leading Malaysian banks (Maybank, Public Bank, CIMB, Hong Leong) for quick approval.
+                    </p>
+                    <div class="p-4 bg-slate-800/80 rounded-xl border border-gray-700 space-y-3 text-xs text-gray-300">
+                        <div class="flex items-center"><i class="fa-solid fa-circle-check text-green-400 mr-2 text-sm"></i> 0% Downpayment / Full Loan Option Available</div>
+                        <div class="flex items-center"><i class="fa-solid fa-circle-check text-green-400 mr-2 text-sm"></i> Up to 9 Years Loan Tenure</div>
+                        <div class="flex items-center"><i class="fa-solid fa-circle-check text-green-400 mr-2 text-sm"></i> Fast Document Processing</div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 bg-slate-800 p-6 sm:p-8 rounded-2xl border border-gray-700 shadow-xl">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="space-y-5">
+                            <!-- Car Price -->
+                            <div>
+                                <div class="flex justify-between text-sm font-semibold mb-2">
+                                    <span>Car Price (RM)</span>
+                                    <span id="calc-price-val" class="text-amber-400 font-bold">RM 55,000</span>
+                                </div>
+                                <input type="range" id="calc-price" min="15000" max="150000" step="1000" value="55000" class="w-full accent-amber-500 cursor-pointer" oninput="calculateLoan()">
+                            </div>
+
+                            <!-- Downpayment -->
+                            <div>
+                                <div class="flex justify-between text-sm font-semibold mb-2">
+                                    <span>Downpayment (RM)</span>
+                                    <span id="calc-dp-val" class="text-amber-400 font-bold">RM 5,500</span>
+                                </div>
+                                <input type="range" id="calc-dp" min="0" max="30000" step="500" value="5500" class="w-full accent-amber-500 cursor-pointer" oninput="calculateLoan()">
+                            </div>
+
+                            <!-- Loan Tenure -->
+                            <div>
+                                <div class="flex justify-between text-sm font-semibold mb-2">
+                                    <span>Loan Tenure (Years)</span>
+                                    <span id="calc-tenure-val" class="text-amber-400 font-bold">7 Years</span>
+                                </div>
+                                <input type="range" id="calc-tenure" min="1" max="9" step="1" value="7" class="w-full accent-amber-500 cursor-pointer" oninput="calculateLoan()">
+                            </div>
+
+                            <!-- Interest Rate -->
+                            <div>
+                                <div class="flex justify-between text-sm font-semibold mb-2">
+                                    <span>Interest Rate (%)</span>
+                                    <span id="calc-rate-val" class="text-amber-400 font-bold">3.5 %</span>
+                                </div>
+                                <input type="range" id="calc-rate" min="2.5" max="5.5" step="0.1" value="3.5" class="w-full accent-amber-500 cursor-pointer" oninput="calculateLoan()">
+                            </div>
+                        </div>
+
+                        <!-- Results Card -->
+                        <div class="bg-navy-900 p-6 rounded-xl border border-gray-700 flex flex-col justify-between text-center">
+                            <div>
+                                <span class="text-xs uppercase tracking-wider text-gray-400 font-medium">Estimated Installment</span>
+                                <div class="text-3xl sm:text-4xl font-extrabold text-amber-400 my-3" id="calc-monthly">RM 734</div>
+                                <span class="text-xs text-gray-400">/ month</span>
+                            </div>
+
+                            <div class="py-4 border-t border-b border-gray-800 my-4 space-y-2 text-xs text-gray-300">
+                                <div class="flex justify-between">
+                                    <span>Loan Amount:</span>
+                                    <span id="calc-loan-amt" class="font-bold text-white">RM 49,500</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Total Interest:</span>
+                                    <span id="calc-total-interest" class="font-bold text-white">RM 12,127</span>
+                                </div>
+                            </div>
+
+                            <a href="https://wa.me/60123456789?text=Hi%20JWD%20Autoworld,%20I%20would%20like%20to%20apply%20for%20a%20car%20loan%20pre-approval." target="_blank" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-3 rounded-lg transition text-sm flex items-center justify-center">
+                                Apply for Loan Pre-Check
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trade-In & Sell Your Car Section -->
+    <section id="tradein" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6 space-y-4">
+                    <span class="text-amber-600 font-bold text-sm tracking-wider uppercase">Best Value Guaranteed</span>
+                    <h2 class="text-3xl font-extrabold text-navy-900">Want to Sell or Trade-In Your Car?</h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        Get a high trade-in valuation for your vehicle at JWD Autoworld. We offer fast inspection, immediate settlement of outstanding bank loans, and hassle-free JPJ ownership transfer.
+                    </p>
+
+                    <div class="space-y-4 pt-2">
+                        <div class="flex items-start space-x-3">
+                            <div class="bg-amber-500/10 text-amber-600 p-2 rounded-lg mt-1 font-bold"><i class="fa-solid fa-coins"></i></div>
+                            <div>
+                                <h4 class="font-bold text-navy-900">Competitive Market Valuation</h4>
+                                <p class="text-xs text-gray-600">We offer top prices based on actual market conditions in Klang Valley.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="bg-amber-500/10 text-amber-600 p-2 rounded-lg mt-1 font-bold"><i class="fa-solid fa-bolt"></i></div>
+                            <div>
+                                <h4 class="font-bold text-navy-900">Fast Bank Loan Settlement</h4>
+                                <p class="text-xs text-gray-600">We settle your remaining car loan balance directly with banks.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Valuation Form -->
+                <div class="lg:col-span-6 bg-gray-50 p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-md">
+                    <h3 class="text-xl font-bold text-navy-900 mb-4">Request Free Car Valuation</h3>
+                    <form id="tradein-form" onsubmit="handleTradeInSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Car Brand & Model *</label>
+                                <input type="text" required placeholder="e.g., Honda City" class="w-full bg-white border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Year of Manufacture *</label>
+                                <input type="number" required placeholder="e.g., 2018" class="w-full bg-white border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Current Mileage (KM)</label>
+                                <input type="text" placeholder="e.g., 85,000 km" class="w-full bg-white border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">Your Name *</label>
+                                <input type="text" required placeholder="Full Name" class="w-full bg-white border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">WhatsApp / Contact Number *</label>
+                            <input type="tel" required placeholder="e.g., 012-345 6789" class="w-full bg-white border border-gray-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+
+                        <button type="submit" class="w-full bg-navy-900 hover:bg-slate-800 text-amber-400 font-bold py-3 rounded-lg shadow transition flex items-center justify-center">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> Get Instant Estimate via WhatsApp
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location & Contact Section -->
+    <section id="contact" class="py-16 bg-gray-100 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-amber-600 font-bold text-sm tracking-wider uppercase">Visit Our Showroom</span>
+                <h2 class="text-3xl font-extrabold text-navy-900">Contact & Location</h2>
+                <p class="text-gray-600 mt-2">Come over for a coffee and test drive your favorite car today!</p>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+                <!-- Info Cards -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex items-start space-x-4">
+                        <div class="bg-amber-500/10 text-amber-600 p-3 rounded-xl text-xl font-bold">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-navy-900 text-lg">Address</h4>
+                            <p class="text-sm text-gray-600 mt-1 leading-relaxed">
+                                Lot 14991, Batu 5, Kampung Johan Setia,<br>
+                                41200 Klang, Selangor, Malaysia
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex items-start space-x-4">
+                        <div class="bg-amber-500/10 text-amber-600 p-3 rounded-xl text-xl font-bold">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-navy-900 text-lg">Business Hours</h4>
+                            <p class="text-sm text-gray-600 mt-1">
+                                Monday - Saturday: 9:00 AM – 6:30 PM<br>
+                                Sunday & Public Holidays: 10:00 AM – 5:00 PM
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex items-start space-x-4">
+                        <div class="bg-amber-500/10 text-amber-600 p-3 rounded-xl text-xl font-bold">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-navy-900 text-lg">Hotline & Enquiries</h4>
+                            <p class="text-sm text-gray-600 mt-1">
+                                Phone: +60 12-345 6789 / +60 3-3344 5566<br>
+                                Email: sales@jwdautoworld.com.my
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Map Placeholder Card -->
+                <div class="lg:col-span-7 bg-navy-900 text-white rounded-2xl overflow-hidden shadow-xl border border-gray-700 min-h-[350px] flex flex-col justify-between p-8 relative">
+                    <div class="relative z-10">
+                        <div class="inline-block bg-amber-500 text-navy-900 text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">Showroom Directions</div>
+                        <h3 class="text-2xl font-bold">Easy Access along Jalan Langat, Klang</h3>
+                        <p class="text-gray-300 text-sm mt-2 max-w-md">
+                            Located conveniently at Kampung Johan Setia, Klang. Click below to navigate directly using Waze or Google Maps.
+                        </p>
+                    </div>
+
+                    <div class="relative z-10 pt-8 flex flex-wrap gap-4">
+                        <a href="https://maps.google.com/?q=Lot+14991+Batu+5+Kampung+Johan+Setia+41200+Klang+Selangor" target="_blank" class="bg-white hover:bg-gray-100 text-navy-900 font-bold px-6 py-3 rounded-xl shadow flex items-center transition text-sm">
+                            <i class="fa-solid fa-map-location-dot text-amber-600 text-lg mr-2"></i> Open Google Maps
+                        </a>
+                        <a href="https://waze.com/ul?q=JWD%20Autoworld%20Klang" target="_blank" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold px-6 py-3 rounded-xl shadow flex items-center transition text-sm">
+                            <i class="fa-brands fa-waze text-lg mr-2"></i> Navigate via Waze
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy-900 text-gray-400 border-t border-gray-800 text-sm py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <span class="bg-amber-500 text-navy-900 font-extrabold text-lg px-2.5 py-1 rounded">JWD</span>
+                        <span class="font-bold text-white text-lg">AUTOWORLD SDN. BHD.</span>
+                    </div>
+                    <p class="text-xs text-gray-500">© 2026 JWD Autoworld Sdn. Bhd. (Co. Reg. No. 1234567-X). All rights reserved.</p>
+                </div>
+
+                <div class="flex space-x-6 text-xl">
+                    <a href="https://facebook.com" target="_blank" class="hover:text-amber-400 transition"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="https://instagram.com" target="_blank" class="hover:text-amber-400 transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://wa.me/60123456789" target="_blank" class="hover:text-green-400 transition"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Car Details Modal -->
+    <div id="car-modal" class="fixed inset-0 z-50 bg-black/75 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl transform transition-all max-h-[90vh] flex flex-col">
+            <div class="p-4 bg-navy-900 text-white flex justify-between items-center">
+                <h3 id="modal-title" class="font-bold text-lg">Car Details</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white text-xl p-1">&times;</button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto space-y-4 text-sm text-gray-700">
+                <img id="modal-img" src="" alt="Car Image" class="w-full h-60 object-cover rounded-xl shadow-sm">
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                    <div class="bg-gray-100 p-2.5 rounded-lg"><span class="block text-xs text-gray-500">Year</span><strong id="modal-year" class="text-navy-900"></strong></div>
+                    <div class="bg-gray-100 p-2.5 rounded-lg"><span class="block text-xs text-gray-500">Mileage</span><strong id="modal-mileage" class="text-navy-900"></strong></div>
+                    <div class="bg-gray-100 p-2.5 rounded-lg"><span class="block text-xs text-gray-500">Transmission</span><strong id="modal-trans" class="text-navy-900"></strong></div>
+                    <div class="bg-gray-100 p-2.5 rounded-lg"><span class="block text-xs text-gray-500">Engine</span><strong id="modal-engine" class="text-navy-900"></strong></div>
+                </div>
+
+                <div class="border-t pt-4">
+                    <h4 class="font-bold text-navy-900 mb-2">Vehicle Highlights:</h4>
+                    <ul class="list-disc pl-5 space-y-1 text-xs text-gray-600">
+                        <li>100% PUSPAKOM Certified & Verified Non-Accident</li>
+                        <li>Clean Interior & Smooth Engine Performance</li>
+                        <li>Full Service Record Available</li>
+                        <li>Fast Bank Loan Approval within 3 Working Days</li>
+                    </ul>
+                </div>
+
+                <div class="flex justify-between items-center bg-amber-50/80 p-4 rounded-xl border border-amber-200">
+                    <div>
+                        <span class="text-xs text-amber-800 font-semibold">Selling Price:</span>
+                        <div id="modal-price" class="text-2xl font-extrabold text-navy-900"></div>
+                    </div>
+                    <div>
+                        <span class="text-xs text-amber-800 font-semibold">Est. Monthly:</span>
+                        <div id="modal-installment" class="text-lg font-bold text-amber-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-gray-50 border-t flex gap-3">
+                <a id="modal-wa-btn" href="#" target="_blank" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg text-center transition flex items-center justify-center text-sm">
+                    <i class="fa-brands fa-whatsapp text-lg mr-2"></i> Book Test Drive on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Car Data Inventory
+        const cars = [
+            {
+                id: 1,
+                name: "Perodua Myvi 1.5 AV Facelift",
+                make: "Perodua",
+                body: "Hatchback",
+                year: 2021,
+                price: 45800,
+                mileage: "42,000 km",
+                transmission: "Automatic",
+                engine: "1.5L Dual VVT-i",
+                monthly: 590,
+                badge: "Full Loan",
+                tag: "Local",
+                image: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                id: 2,
+                name: "Proton X50 1.5T Executive",
+                make: "Proton",
+                body: "SUV",
+                year: 2022,
+                price: 69800,
+                mileage: "35,000 km",
+                transmission: "7-Speed DCT",
+                engine: "1.5L Turbo",
+                monthly: 885,
+                badge: "Low Deposit",
+                tag: "Local",
+                image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                id: 3,
+                name: "Honda HR-V 1.8 V Spec",
+                make: "Honda",
+                body: "SUV",
+                year: 2019,
+                price: 74500,
+                mileage: "68,000 km",
+                transmission: "CVT",
+                engine: "1.8L i-VTEC",
+                monthly: 940,
+                badge: "PUSPAKOM Verified",
+                tag: "Japanese",
+                image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                id: 4,
+                name: "Toyota Vios 1.5 E Spec",
+                make: "Toyota",
+                body: "Sedan",
+                year: 2020,
+                price: 58800,
+                mileage: "52,000 km",
+                transmission: "7-Speed CVT",
+                engine: "1.5L Dual VVT-i",
+                monthly: 750,
+                badge: "Accident Free",
+                tag: "Japanese",
+                image: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                id: 5,
+                name: "Perodua Bezza 1.3 X Spec",
+                make: "Perodua",
+                body: "Sedan",
+                year: 2018,
+                price: 29800,
+                mileage: "78,000 km",
+                transmission: "Automatic",
+                engine: "1.3L Dual VVT-i",
+                monthly: 390,
+                badge: "Under RM30k",
+                tag: "Local",
+                image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=800"
+            },
+            {
+                id: 6,
+                name: "Honda Civic 1.5 TC-P Turbo",
+                make: "Honda",
+                body: "Sedan",
+                year: 2019,
+                price: 86800,
+                mileage: "61,000 km",
+                transmission: "CVT Turbo",
+                engine: "1.5L VTEC Turbo",
+                monthly: 1090,
+                badge: "Hot Model",
+                tag: "Japanese",
+                image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&q=80&w=800"
+            }
+        ];
+
+        // Render Inventory
+        function renderCars(data) {
+            const container = document.getElementById('car-grid');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 font-medium">No matching vehicles found. Please adjust filters.</div>`;
+                return;
+            }
+
+            data.forEach(car => {
+                const card = `
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col group">
+                        <div class="relative overflow-hidden h-48 bg-gray-200">
+                            <img src="${car.image}" alt="${car.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/800x500/0F172A/FFF?text=${encodeURIComponent(car.name)}'">
+                            <span class="absolute top-3 left-3 bg-navy-900 text-amber-400 text-xs font-bold px-3 py-1 rounded-full shadow">
+                                ${car.badge}
+                            </span>
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-navy-900 text-lg group-hover:text-amber-600 transition">${car.name}</h3>
+                                <div class="flex items-center space-x-3 text-xs text-gray-500 mt-2">
+                                    <span><i class="fa-solid fa-calendar-days text-amber-500 mr-1"></i>${car.year}</span>
+                                    <span>•</span>
+                                    <span><i class="fa-solid fa-gauge text-amber-500 mr-1"></i>${car.mileage}</span>
+                                    <span>•</span>
+                                    <span><i class="fa-solid fa-gears text-amber-500 mr-1"></i>${car.transmission}</span>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-gray-100 mt-4 flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs text-gray-400">Cash Price:</span>
+                                    <div class="text-xl font-extrabold text-navy-900">RM ${car.price.toLocaleString()}</div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-gray-400">Est. Monthly:</span>
+                                    <div class="text-sm font-bold text-amber-600">RM ${car.monthly} /mo</div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 mt-4">
+                                <button onclick="openModal(${car.id})" class="bg-gray-100 hover:bg-gray-200 text-navy-900 font-semibold py-2 rounded-lg text-xs transition">
+                                    View Details
+                                </button>
+                                <a href="https://wa.me/60123456789?text=Hi%20JWD%20Autoworld,%20I%20am%20interested%20in%20the%20${encodeURIComponent(car.name)}%20(RM%20${car.price})" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-2 rounded-lg text-xs transition text-center flex items-center justify-center">
+                                    <i class="fa-brands fa-whatsapp mr-1"></i> Inquire
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        // Inventory Filter Buttons
+        function filterInventory(category) {
+            document.querySelectorAll('.inv-tab').forEach(btn => {
+                btn.classList.remove('bg-navy-900', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-700');
+            });
+
+            event.target.classList.remove('bg-white', 'text-gray-700');
+            event.target.classList.add('bg-navy-900', 'text-white');
+
+            if (category === 'All') {
+                renderCars(cars);
+            } else if (category === 'Under30k') {
+                renderCars(cars.filter(c => c.price <= 30000));
+            } else if (category === 'SUV') {
+                renderCars(cars.filter(c => c.body === 'SUV' || c.body === 'MPV'));
+            } else if (category === 'Local') {
+                renderCars(cars.filter(c => c.tag === 'Local'));
+            } else if (category === 'Japanese') {
+                renderCars(cars.filter(c => c.tag === 'Japanese'));
+            }
+        }
+
+        // Hero Filter Logic
+        function applyHeroFilter() {
+            const make = document.getElementById('hero-make').value;
+            const body = document.getElementById('hero-body').value;
+            const budget = document.getElementById('hero-budget').value;
+
+            let filtered = cars;
+            if (make !== 'All') filtered = filtered.filter(c => c.make === make);
+            if (body !== 'All') filtered = filtered.filter(c => c.body === body);
+            if (budget !== 'All') filtered = filtered.filter(c => c.price <= parseInt(budget));
+
+            renderCars(filtered);
+            document.getElementById('inventory').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Loan Calculator Logic
+        function calculateLoan() {
+            const price = parseFloat(document.getElementById('calc-price').value);
+            const dp = parseFloat(document.getElementById('calc-dp').value);
+            const tenure = parseInt(document.getElementById('calc-tenure').value);
+            const rate = parseFloat(document.getElementById('calc-rate').value) / 100;
+
+            document.getElementById('calc-price-val').innerText = `RM ${price.toLocaleString()}`;
+            document.getElementById('calc-dp-val').innerText = `RM ${dp.toLocaleString()}`;
+            document.getElementById('calc-tenure-val').innerText = `${tenure} Years`;
+            document.getElementById('calc-rate-val').innerText = `${(rate * 100).toFixed(1)} %`;
+
+            const loanAmount = Math.max(0, price - dp);
+            const totalInterest = loanAmount * rate * tenure;
+            const totalPayable = loanAmount + totalInterest;
+            const monthlyInstallment = Math.round(totalPayable / (tenure * 12));
+
+            document.getElementById('calc-monthly').innerText = `RM ${monthlyInstallment.toLocaleString()}`;
+            document.getElementById('calc-loan-amt').innerText = `RM ${loanAmount.toLocaleString()}`;
+            document.getElementById('calc-total-interest').innerText = `RM ${Math.round(totalInterest).toLocaleString()}`;
+        }
+
+        // Car Modal Control
+        function openModal(carId) {
+            const car = cars.find(c => c.id === carId);
+            if (!car) return;
+
+            document.getElementById('modal-title').innerText = car.name;
+            document.getElementById('modal-img').src = car.image;
+            document.getElementById('modal-year').innerText = car.year;
+            document.getElementById('modal-mileage').innerText = car.mileage;
+            document.getElementById('modal-trans').innerText = car.transmission;
+            document.getElementById('modal-engine').innerText = car.engine;
+            document.getElementById('modal-price').innerText = `RM ${car.price.toLocaleString()}`;
+            document.getElementById('modal-installment').innerText = `RM ${car.monthly} / month`;
+            document.getElementById('modal-wa-btn').href = `https://wa.me/60123456789?text=Hi%20JWD%20Autoworld,%20I%20would%20like%20to%20book%20a%20test%20drive%20for%20${encodeURIComponent(car.name)}`;
+
+            const modal = document.getElementById('car-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('car-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Trade-In Form Submission Handler
+        function handleTradeInSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const carModel = form.querySelectorAll('input')[0].value;
+            const year = form.querySelectorAll('input')[1].value;
+            const name = form.querySelectorAll('input')[3].value;
+            
+            const waMessage = `Hi JWD Autoworld, I would like to get a valuation for my car:%0A- Model: ${encodeURIComponent(carModel)}%0A- Year: ${encodeURIComponent(year)}%0A- Owner: ${encodeURIComponent(name)}`;
+            window.open(`https://wa.me/60123456789?text=${waMessage}`, '_blank');
+        }
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Initialize Page
+        window.onload = function() {
+            renderCars(cars);
+            calculateLoan();
+        };
+    </script>
+</body>
+</html>
