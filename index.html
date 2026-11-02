@@ -351,9 +351,9 @@
                                 </div>
                             </div>
 
-                            <a href="https://wa.me/60123456789?text=Hi%20JWD%20Autoworld,%20I%20would%20like%20to%20apply%20for%20a%20car%20loan%20pre-approval." target="_blank" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-3 rounded-lg transition text-sm flex items-center justify-center">
-                                Apply for Loan Pre-Check
-                            </a>
+                            <button type="button" onclick="openLoanChooser()" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-3 rounded-lg transition text-sm flex items-center justify-center">
+                                <i class="fa-brands fa-whatsapp mr-2 text-lg"></i> Apply for Loan Pre-Check
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -586,7 +586,7 @@
                 <button onclick="closeTradeInModal()" class="text-gray-400 hover:text-white text-xl p-1">&times;</button>
             </div>
             <div class="p-5 space-y-3">
-                <p class="text-sm text-gray-600">Who would you like to send your car valuation request to via WhatsApp?</p>
+                <p id="chooser-desc" class="text-sm text-gray-600">Who would you like to contact via WhatsApp?</p>
                 <div id="tradein-contacts" class="space-y-3"></div>
             </div>
         </div>
@@ -833,12 +833,18 @@
             const model = inputs[0].value, year = inputs[1].value, mileage = inputs[2].value || '-', name = inputs[3].value, phone = inputs[4].value;
             tradeInMessage = `Hi JWD Autoworld, I would like to get a valuation for my car:\n- Model: ${model}\n- Year: ${year}\n- Mileage: ${mileage}\n- Owner: ${name}\n- Contact: ${phone}`;
 
+            openSalesChooser(tradeInMessage, 'Who would you like to send your car valuation request to via WhatsApp?');
+        }
+
+        // Reusable popup: choose Daniel or William, then open WhatsApp with the message
+        function openSalesChooser(message, description) {
             const team = [
                 { name: "Daniel Soh", phone: "60123858996", display: "012-385 8996" },
                 { name: "William Soh", phone: "60123230396", display: "012-323 0396" }
             ];
+            document.getElementById('chooser-desc').innerText = description;
             document.getElementById('tradein-contacts').innerHTML = team.map(t => `
-                <a href="https://wa.me/${t.phone}?text=${encodeURIComponent(`Hi ${t.name}, ` + tradeInMessage.replace('Hi JWD Autoworld, ', ''))}" target="_blank" onclick="setTimeout(closeTradeInModal, 300)" class="flex items-center gap-4 p-3 rounded-xl border border-gray-200 hover:border-green-500 hover:bg-green-50 transition">
+                <a href="https://wa.me/${t.phone}?text=${encodeURIComponent(`Hi ${t.name}, ` + message.replace('Hi JWD Autoworld, ', ''))}" target="_blank" onclick="setTimeout(closeTradeInModal, 300)" class="flex items-center gap-4 p-3 rounded-xl border border-gray-200 hover:border-green-500 hover:bg-green-50 transition">
                     <img src="${salesPhotos[t.name]}" alt="${t.name}" class="w-14 h-14 rounded-full object-cover border-2 border-amber-500/40 flex-shrink-0">
                     <div class="flex-1 text-left">
                         <div class="font-bold text-navy-900">${t.name}</div>
@@ -850,6 +856,12 @@
             const modal = document.getElementById('tradein-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+        }
+
+        // Loan pre-check button
+        function openLoanChooser() {
+            const msg = `Hi JWD Autoworld, I would like to apply for a car loan pre-approval:\n- Car price: ${document.getElementById('calc-price-val').innerText}\n- Downpayment: ${document.getElementById('calc-dp-val').innerText}\n- Tenure: ${document.getElementById('calc-tenure-val').innerText}\n- Interest rate: ${document.getElementById('calc-rate-val').innerText}\n- Est. monthly: ${document.getElementById('calc-monthly').innerText}`;
+            openSalesChooser(msg, 'Who would you like to send your loan pre-check request to via WhatsApp?');
         }
 
         function closeTradeInModal() {
