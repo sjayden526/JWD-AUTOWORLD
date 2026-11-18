@@ -541,10 +541,9 @@
             </div>
             
             <div class="p-6 overflow-y-auto space-y-4 text-sm text-gray-700">
-                <div class="relative cursor-pointer" onclick="openViewer(modalCarId, modalIdx)" title="Click to enlarge">
+                <div class="relative cursor-pointer">
                     <img id="modal-img" src="" alt="Car Image" class="w-full h-60 sm:h-72 object-cover rounded-xl shadow-sm">
                     <span id="modal-count" class="absolute bottom-2 right-2 bg-black/70 text-white text-xs font-bold px-2.5 py-1 rounded-full"></span>
-                    <span class="absolute bottom-2 left-2 bg-black/70 text-white text-xs font-semibold px-2.5 py-1 rounded-full"><i class="fa-solid fa-expand mr-1"></i>Enlarge</span>
                 </div>
                 <div id="modal-gallery" class="flex gap-2 overflow-x-auto pb-1"></div>
                 
@@ -597,43 +596,19 @@
         </div>
     </div>
 
-    <!-- Fullscreen Photo Viewer -->
-    <div id="photo-viewer" class="fixed inset-0 z-[60] bg-black/95 hidden flex-col text-white select-none">
-        <div class="flex items-center justify-between p-3 sm:p-4">
-            <div class="min-w-0">
-                <div id="viewer-title" class="font-bold text-sm sm:text-base truncate"></div>
-                <div class="text-xs text-gray-400"><span id="viewer-caption"></span> · <span id="viewer-counter"></span></div>
-            </div>
-            <button onclick="closeViewer()" class="text-3xl leading-none px-3 py-1 hover:text-amber-400" aria-label="Close">&times;</button>
-        </div>
-        <div id="viewer-stage" class="flex-1 min-h-0 relative flex items-center justify-center overflow-hidden">
-            <img id="viewer-img" src="" alt="" onclick="toggleZoom(event)" class="max-w-full max-h-full object-contain cursor-zoom-in transition-transform duration-200">
-            <button onclick="stepViewer(-1)" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 hover:bg-amber-500 hover:text-navy-900 transition flex items-center justify-center" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
-            <button onclick="stepViewer(1)" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 hover:bg-amber-500 hover:text-navy-900 transition flex items-center justify-center" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
-            <div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-[11px] text-gray-300 bg-black/50 px-3 py-1 rounded-full pointer-events-none">Tap photo to zoom · Swipe or use arrow keys</div>
-        </div>
-        <div id="viewer-thumbs" class="flex gap-2 overflow-x-auto px-3 py-3"></div>
-        <div class="px-3 pb-4">
-            <button onclick="viewerToDetails()" class="w-full bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-3 rounded-lg text-sm transition"><i class="fa-brands fa-whatsapp mr-1"></i> View Details & Contact Sales</button>
-        </div>
-    </div>
-
     <!-- JavaScript Logic -->
     <script>
-        // ===== 1. Supabase 连接配置 =====
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // <-- 请替换成你的 Project URL
-        const SUPABASE_KEY = 'YOUR_SUPABASE_KEY'; // <-- 请替换成你的 Publishable key
+        // ===== 已自动填好你的 Supabase 密钥 =====
+        const SUPABASE_URL = 'https://qokodjjnjtjkihrnnwyw.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_FcWUXzF-TJVVIecbTXpAmA_3ET8b2q-';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let allCars = [];
-
-        // 销售顾问头像（使用高清网络链接，无任何乱码）
         const salesPhotos = {
             "Daniel Soh": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
             "William Soh": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
         };
 
-        // 从云端加载在售车辆
         async function fetchCarsFromCloud() {
             const container = document.getElementById('car-grid');
             const { data, error } = await supabaseClient
@@ -651,11 +626,10 @@
             renderCars(allCars);
         }
 
-        // 渲染车辆列表
         function renderCars(data) {
             const container = document.getElementById('car-grid');
             if (data.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 font-medium">No vehicles currently available in showroom. Check back soon!</div>`;
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 font-medium">No vehicles currently available in showroom. Please add cars via admin panel!</div>`;
                 return;
             }
 
@@ -664,11 +638,9 @@
                 const mainImg = images[0] || 'https://placehold.co/800x500/0F172A/FFF?text=No+Image';
                 return `
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col group">
-                        <div class="relative overflow-hidden h-56 bg-gray-200 cursor-pointer" onclick="openModal(${car.id})" title="Click to view all photos">
+                        <div class="relative overflow-hidden h-56 bg-gray-200 cursor-pointer" onclick="openModal(${car.id})">
                             <img src="${mainImg}" alt="${car.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition pointer-events-none"></div>
-                            <span class="absolute bottom-3 left-3 text-white text-xs font-semibold flex items-center gap-1.5 pointer-events-none"><i class="fa-solid fa-expand"></i> Tap to view car condition</span>
-                            <span class="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-2.5 py-1 rounded-full pointer-events-none"><i class="fa-solid fa-camera mr-1"></i>${images.length}</span>
+                            <span class="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-2.5 py-1 rounded-full"><i class="fa-solid fa-camera mr-1"></i>${images.length}</span>
                             <span class="absolute top-3 left-3 bg-navy-900 text-amber-400 text-xs font-bold px-3 py-1 rounded-full shadow">
                                 ${car.badge || 'Verified'}
                             </span>
@@ -700,7 +672,7 @@
                                 <button onclick="openModal(${car.id})" class="bg-gray-100 hover:bg-gray-200 text-navy-900 font-semibold py-2 rounded-lg text-xs transition">
                                     View Details
                                 </button>
-                                <a href="https://wa.me/60123456789?text=Hi%20JWD%20Autoworld,%20I%20am%20interested%20in%20the%20${encodeURIComponent(car.name)}%20(RM%20${car.price})" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-2 rounded-lg text-xs transition text-center flex items-center justify-center">
+                                <a href="https://wa.me/60123456789?text=Hi%20JWD%20Autoworld,%20I%20am%20interested%20in%20the%20${encodeURIComponent(car.name)}" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-2 rounded-lg text-xs transition text-center flex items-center justify-center">
                                     <i class="fa-brands fa-whatsapp mr-1"></i> Inquire
                                 </a>
                             </div>
@@ -710,7 +682,6 @@
             }).join('');
         }
 
-        // 分类筛选
         function filterInventory(category, btn) {
             document.querySelectorAll('.inv-tab').forEach(el => {
                 el.classList.remove('bg-navy-900', 'text-white');
@@ -721,14 +692,10 @@
                 btn.classList.add('bg-navy-900', 'text-white');
             }
 
-            if (category === 'All') {
-                renderCars(allCars);
-            } else {
-                renderCars(allCars.filter(c => c.tag === category));
-            }
+            if (category === 'All') renderCars(allCars);
+            else renderCars(allCars.filter(c => c.tag === category));
         }
 
-        // 首页搜索框筛选
         function applyHeroFilter() {
             const make = document.getElementById('hero-make').value;
             const body = document.getElementById('hero-body').value;
@@ -743,7 +710,6 @@
             document.getElementById('inventory').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // 贷款计算器逻辑
         function calculateLoan() {
             const price = parseFloat(document.getElementById('calc-price').value);
             const dp = parseFloat(document.getElementById('calc-dp').value);
@@ -765,15 +731,13 @@
             document.getElementById('calc-total-interest').innerText = `RM ${Math.round(totalInterest).toLocaleString()}`;
         }
 
-        // 车辆详情模态框
-        let modalCarId = null, modalIdx = 0;
-        function openModal(carId) {
-            const car = allCars.find(c => c.id === carId);
+        function openModal(id) {
+            const car = allCars.find(c => c.id === id);
             if (!car) return;
-            modalCarId = car.id;
             const images = car.Images || [];
 
             document.getElementById('modal-title').innerText = car.name;
+            document.getElementById('modal-img').src = images[0] || '';
             document.getElementById('modal-year').innerText = car.year;
             document.getElementById('modal-mileage').innerText = car.mileage;
             document.getElementById('modal-trans').innerText = car.transmission;
@@ -795,39 +759,19 @@
                     <a href="tel:+${c.phone}" class="bg-navy-900 hover:bg-slate-800 text-amber-400 px-4 flex items-center"><i class="fa-solid fa-phone"></i></a>
                 </div>`).join('');
 
-            if (car.features && car.features.length > 0) {
-                document.getElementById('modal-features').innerHTML = car.features.map(f => `<li>${f}</li>`).join('');
-            }
-
             document.getElementById('modal-gallery').innerHTML = images.map((img, i) => `
-                <img src="${img}" onclick="setModalPhoto(${i})" class="modal-thumb h-14 w-20 object-cover rounded-md cursor-pointer flex-shrink-0 border-2 border-transparent transition">
+                <img src="${img}" onclick="document.getElementById('modal-img').src='${img}'" class="h-14 w-20 object-cover rounded-md cursor-pointer border-2 hover:border-amber-500 transition">
             `).join('');
 
-            setModalPhoto(0);
-            const modal = document.getElementById('car-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function setModalPhoto(i) {
-            const car = allCars.find(c => c.id === modalCarId);
-            const images = car.Images || [];
-            modalIdx = i;
-            document.getElementById('modal-img').src = images[i] || '';
-            document.getElementById('modal-count').innerText = `${i + 1} / ${images.length}`;
-            document.querySelectorAll('#modal-gallery .modal-thumb').forEach((el, k) => {
-                el.classList.toggle('border-amber-500', k === i);
-                el.classList.toggle('opacity-60', k !== i);
-            });
+            document.getElementById('car-modal').classList.remove('hidden');
+            document.getElementById('car-modal').classList.add('flex');
         }
 
         function closeModal() {
-            const modal = document.getElementById('car-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            document.getElementById('car-modal').classList.add('hidden');
+            document.getElementById('car-modal').classList.remove('flex');
         }
 
-        // Trade-in 表单处理
         function handleTradeInSubmit(e) {
             e.preventDefault();
             const inputs = e.target.querySelectorAll('input');
@@ -857,9 +801,8 @@
                     <span class="bg-green-600 text-white text-xs font-bold px-3 py-2 rounded-lg"><i class="fa-brands fa-whatsapp mr-1"></i>WhatsApp</span>
                 </a>`).join('');
 
-            const modal = document.getElementById('tradein-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            document.getElementById('tradein-modal').classList.remove('hidden');
+            document.getElementById('tradein-modal').classList.add('flex');
         }
 
         function closeTradeInModal() {
@@ -867,7 +810,6 @@
             document.getElementById('tradein-modal').classList.remove('flex');
         }
 
-        // 渲染销售团队
         function renderSalesTeam() {
             const team = [
                 { name: "Daniel Soh", phone: "60123858996", display: "012-385 8996" },
@@ -885,12 +827,10 @@
                 </div>`).join('');
         }
 
-        // 移动端菜单切换
         document.getElementById('mobile-menu-btn').addEventListener('click', () => {
             document.getElementById('mobile-menu').classList.toggle('hidden');
         });
 
-        // 页面初始化
         window.onload = function() {
             fetchCarsFromCloud();
             calculateLoan();
