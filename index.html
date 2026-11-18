@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -112,7 +114,6 @@
 
     <!-- Hero Section -->
     <section id="home" class="relative bg-navy-900 text-white py-16 md:py-24 overflow-hidden">
-        <!-- Background Overlay Image -->
         <div class="absolute inset-0 z-0 opacity-20 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=1600');"></div>
         
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -260,17 +261,17 @@
                 </div>
                 <!-- Filter Tabs -->
                 <div class="flex flex-wrap gap-2 text-sm">
-                    <button onclick="filterInventory('All')" class="inv-tab active px-4 py-2 rounded-lg font-semibold bg-navy-900 text-white transition">All Cars</button>
-                    <button onclick="filterInventory('Under30k')" class="inv-tab px-4 py-2 rounded-lg font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Under RM30k</button>
-                    <button onclick="filterInventory('SUV')" class="inv-tab px-4 py-2 rounded-lg font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">SUVs & MPVs</button>
-                    <button onclick="filterInventory('Local')" class="inv-tab px-4 py-2 rounded-lg font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Local (Proton/Perodua)</button>
-                    <button onclick="filterInventory('Japanese')" class="inv-tab px-4 py-2 rounded-lg font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Japanese (Honda/Toyota)</button>
+                    <button onclick="filterInventory('All', this)" class="inv-tab active px-4 py-2 rounded-lg font-semibold bg-navy-900 text-white transition">All Cars</button>
+                    <button onclick="filterInventory('Local', this)" class="inv-tab px-4 py-2 rounded-lg font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Local (Proton/Perodua)</button>
+                    <button onclick="filterInventory('Japanese', this)" class="inv-tab px-4 py-2 rounded-lg font-semibold bg-white text-gray-700 border hover:bg-gray-100 transition">Japanese (Honda/Toyota)</button>
                 </div>
             </div>
 
-            <!-- Car Grid -->
+            <!-- Car Grid: Loaded dynamically from Supabase -->
             <div id="car-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Cars will be dynamically rendered here via JS -->
+                <div class="col-span-full text-center py-12 text-gray-500 font-medium">
+                    <i class="fa-solid fa-spinner fa-spin mr-2 text-amber-500"></i> Loading vehicles from cloud database...
+                </div>
             </div>
         </div>
     </section>
@@ -519,7 +520,7 @@
                         <span class="bg-amber-500 text-navy-900 font-extrabold text-lg px-2.5 py-1 rounded">JWD</span>
                         <span class="font-bold text-white text-lg">AUTOWORLD SDN. BHD.</span>
                     </div>
-                    <p class="text-xs text-gray-500">© 2026 JWD Autoworld Sdn. Bhd. (Co. Reg. No. 1234567-X). All rights reserved.</p>
+                    <p class="text-xs text-gray-500">© 2026 JWD Autoworld Sdn. Bhd. All rights reserved. · <a href="admin.html" class="text-amber-500 hover:underline">Owner Login</a></p>
                 </div>
 
                 <div class="flex space-x-6 text-xl">
@@ -619,135 +620,57 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // Car Data Inventory
-        // 销售顾问照片
+        // ===== 1. Supabase 连接配置 =====
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // <-- 请替换成你的 Project URL
+        const SUPABASE_KEY = 'YOUR_SUPABASE_KEY'; // <-- 请替换成你的 Publishable key
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let allCars = [];
+
+        // 销售顾问头像（使用高清网络链接，无任何乱码）
         const salesPhotos = {
-            "Daniel Soh": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAUEBAYFBQUGBgYHCQ4JCQgICRINDQoOFRIWFhUSFBQXGiEcFxgfGRQUHScdHyIjJSUlFhwpLCgkKyEkJST/2wBDAQYGBgkICREJCREkGBQYJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCT/wAARCACwALADASIAAhEBAxEB/8QAHAAAAAcBAQAAAAAAAAAAAAAAAQIDBAUGBwAI/8QAPBAAAgEDAwEGAwUFCQEBAQAAAQIDAAQRBRIhMQYTIkFRYQdxgRQjMpGhFUKxwdEIFiQzUmJy4fBDc5L/xAAaAQEAAwEBAQAAAAAAAAAAAAAAAQIDBAUG/8QAIhEAAgIBBQEAAwEAAAAAAAAAAAECEQMEEiExQRMiMlFx/9oADAMBAAIRAxEAPwD0CWFAW9KR30INd9GdimPegPFAGoaA4MaMGz1oBQ7RQAEA9KLsz0oSpoRkUAHd+9dsxRvrQZNABRaHmuAPU0B2wGjGEAVw4odxNAJGMiiGNvSnQNGBFLFDLu2oyoadEA0QqamyKChcDrQggUUg0U5oSLbxQ7gx6UgCaPuOKihYiUIrvF6U4+lFLCpsigigmjgV28UG6oJDg124UnkmgwaUBUuK7cDSQBowHrQgPkUGa7FAzLGjO7AKoySfIUJBzXHio5O0miySNGuqWZZQCQJRxmn8E0N3GJbeaOVD0ZGDD9KAHNcTRimKKUPlQA7q7vK4RE0PcigA7yh30PcgUBT2oApak23GlNpHlXAGpIEgGo6+9GwaMFpYAL8UmxBoSAKDIHlUADgmhAFcGHpQ7hQAg0Ga4tXAg0AO6hGDQcVE9qu0MHZbQrnVJlL90vgTnxMeg9qAb9sO22mdjtPknupY3uMfd24cB2J6fIe9eee2HxW1PtLcyFbuWO3bwm3ifaiD3Pn/AB/hVS7XdqLzVr+a8mneeeZiSS3HXH5DpVfLOyoZJSCwPgTjJrGU/wCGiVFhg1pmQraxhgvVzJhh8gfL6U6se12uaS2bLULmF2OWERKj6kfzFVV7lioWEYK8EDofrmko2lXJnfqMBc8AfTpVLLWel/hH8aG1ydND7QSIt43EFwxA70+at5Z9Mda2TPGRXg6znNpPBJCkkbI3Dq3CsMEEV7K+HPaZu1fY/T9TmZGndNkuwYAZeDWsJX2Ukiz7q7eKJmu61eiobvBXCSi4WhwPKgDFwaDcKLtoQB70JDDbQ8UXHpRgKECeBQ4X0FI81240oWKlVJ6UUqvlRQxoQx9KmiLAKj3rgh9KNuNDvNCAAhNZH/aPv7iz7NWFshZYLiZhLg4DYAIBrXg1ZH/aUtHuOyVhcp+GG6Kvz0DKcce5FVl0Wj2eZA4mlkMSGYnqAM4A60pZaPqmpyskMTc+xGBWm/C3s5Y3OjmZoA00jkFiKv8AY9lLW2kLRrGvrXmT1DTpHq4dGpJSkzG7D4VagUWV5mYkfhx0FLX/AMML2xhe4MoYquenNbpb2UEWO8kVQPU0eddIP3Ul3b5JxtLVksuTs6npsS4PLpkEEskRVhIvDeX6V6N/sz3ss3Z3U7P/AOFvOjoMdCwOefpWc/FTscum3v7WtrX7ggCRkGQD6n296v39mRP8LrzDgK8K459Grv0+TdyeTnxODaNsINCB6mjNwcedFrqOY7FCFoC2ASeAOSfSoe/7X6Lp5dJNQheVG2GKJt77uOMDoeaAmtoFFmmht0DzSJEvTc7BR+Z4qj3vxEkuhJFp0HcHdhJZeW64PgGQfz/Kq/dSXupOWvbiRsnIyec+uBwv0/OqOaBpOldo9N1mWSG2l+8jOCr4Ut/xGcn5jildevbvTNIuruxsXvruNPurdf32JwM/7RnJ88A1mHcxhVQxqQDxkfqPepJNa7QaM8K2f2q4jJGYZ3yij13MMj5A1X6f0GhbaDbmql/f6QsCdNAjyckyYOPL60V+3Vww2paQRkjlixbHuBXTskU3It4U5o4Q+lZ9cdrNTnGRed0CcDu1C8euetM5bq8uPFPqLSc5IZiRn5ZqVjfo3I0t3jj/AByIv/JgKASxYz3sf/8AYrPYNVkkjIEFvKcYOCQSPkeKLLqEk53Gy7nA/wDko6eVPmybRoEmo2MIy93APbdk/pWc/GvWtKvOx9xphMj3MwM0DKuFDRkHqfYmnCTSjcoj5x4Tx/GoXthaSXumhZIg7DeqjqPEpFZZ1txuSN9LFTyqLKZNFc6DpFjZ2d5HZRiJXaQnackZ6/Wo611/VVvGji7RRX5RsPEAM59Pn7VosNtpt9ZQG4ijeXu12h0DbePemp0SG0drh44gC3GEA5PGenWvEc2e9HH00Quow6le6bHcTGRY3U5CE8jzzUbolrYid44dB1ieTYJBIieBgfct19jzWsLZQx6VCjICiryAOnFR+nWkEUne2xR4jz1qibRo4p8iC6M2p9mbiyu7d4lniZQkg8S5HGfrVU7I2Q0vQobOKR0uGZZ5kAIEu7gq3qACOK0WXVWI7vYA3kBVf1OIabpX2q4l7icRiK26Dc54UAn97P8ACpTk/wAUVW2Lc5eJknpHxCj7M6JDZ6vYSQNGVjjkJ+7O5iSWPoAScj8hSq/GfRiebnTgP/1c5/Sswkm1vVVMd/qt1NDxlLiQbHwc8jHt/SnkOihIle4bCudqBlI3f8V/Ex/9zXrPJtXLPnKc3aRcNX7eW3aSGRYdVH2UeHubRWBdsY27uC3y6VUdQurnSUgFraxgspYWzsQ23A52xggDywc9ae2hct3NpGYIwP8ANcAzsMfujoo9uT7CukhgtRujIj2tmSSVsGTn1P8AOueWZt8G8cKS5IJviBqlmz47MFmHBMbSEn81pSL4la1JNGr9krmNGbBYs4IHTzXFNGltWd++uI5GZuNuW/gMfrUzrPa3QDIslxBcF1UBV7yJRgc8g5Oa2m6quTngru+Bjqfxak02V4YE0e1fgGSScytj6Y/IVUdY+KWp3dywbV727jA5W0TukY+YHQ46VLP2a0ntLqU1/DGjwTRo+7IcksSD4hwMYxj+lO5+yOmafFM6QlEUbTIRkMcDhfX19OaxeQ1WFGjLpMmN0rYi/wCYOTRhBHxEqBFJ/FjJo00090SsKhU8h6YprvlQtuQAjq2CRjz6V6n0fpjsXg4/Z86yFVEoEf8Aqj5x7V32VM75u+lbPiJBGfOnMGowpYvCdNgJ2nZMFy2c8Z56dfL+FOH1KKWBIhKpG0F0YbQSeoAIPAxn61H1Y+aEYxayfhuo7dcdCpyx9K69+zxoqTOHkxwF/TNLSaXaBSy3UCPtU7JH2NknHHljjrTRdLVJljePvA+fvI3BA56YHn86lTj3ZDg+kNhMvKui+memPypRboqjRtiVmHh3LnB8uakZNHtYYVkmEqRYzvkQjJ9AelRPaPWrHsp2av8AU7lFke3iDwLwFdz+AHzwSR+tTOcZRaIhGUZKREyXAspDLkbwxRkVwwVgeRkefSi3N7fXCi7tmjDQ+JFkGVLY4rMPh52mZ2utP1KffcTyteo7HhmflwP4/nVzuZb2/wAfs67NskYyxVAxPyzXgZYbZV4fSabLvgn6SemX/bRpQokijY4ZsxlgV6HA8qlUt5tNO20l72M/iXptPnxWeW1rK90kba3r0r79yIibWU565xV6trCbSF+0NPdXE0gzJ37g1SfB0tOKJq0kdiJZCF2Dz9awn4ldoptb7Sak0l9LJaafOPsaq5CxuigHA6HJB/Orn267ejS7NrGxcG/nGBg/5Kn94+/oKxmZDJMsJJ7oEO2epA6/UmunTY3+zPI1ua/wRr+jdr7cWCX0rRJOo8Ukp3Yxz4VOBuI8yfpSdx8R7O3lNzpkUt/cyDDStmVh9QABj0BxVH0OZDeIJ40ktiwDxyjC49R7itw0PQNJs4VW2t4WjmJKDaBweh49q2ypLk5MdvozSXXe1uo5Wysp7eB+SzvtUcei+X1NDcaRrljaodS1O4jjd/wWcKks+3Jyx8sD1rVX0+KOKdZAUQx5BVf9w8sf0qu9t+8isIhGGcGfAMYyQO7bjA+eKpGVui0o0myL0X4bWGoWffXk17O7gMokm4yegIHFKwfDzQo5mQ6esksO4EgAn5fPrVp0wQQ6faOJQ0ncKE3A94M/zpa/tGuYWlt507wA/dsSDu4545Hn61ST5LRiqICwsLHSbmeG3burVI1VIcZBOGwAD5+9OZFM5W2uCoEqjaGXcqeQXfk85GfrUfp+m3Vxc3kNxKYoyIgY9+Dx5ZPI5Nddyz20T2gY7QxIdHBPI9/L3+dET/hJR9qLUO0Fu0TwiRVH3gDNzjoTyf5VP2ur6DLbEzQX5lcBhtceE/6c5wfn+lU5Ne7MHTbeaexlYP45hjeY2TnkgjIO4Hy6VbLdtNXQo57GGSGKNVcSbvwIOeSWHGFPWuz6J9HLFSY9NvaSxJLaJdIHUEE8gjqDnjy8sUbT20+IyPqNuGjchUkYkYc5wDjyNMe0kFjawJMyLa7l3KXlbJ8Q8t2CMMOnrULoOr2+jm1aK7triSO5IIlLZOHzgnPh4wFPPSplNJERtujTYYYLmK37uCwVbdN8zbgyEEHac8nPXw9eKjJtLsnYiJrVmlKn/CuyInOCTkHPTHXA60rc9stO068Md8ltbOnjlwQWYHpuwCT0+dNdO13T3tHubCe0GJ+73gjIJ55HGeD+lZqZqo36IXEdvcTdzaXlxMwJwoUbE9ASDgnHPFVD4q9nLjUfhzqk8L959kdHdDnKgNyxGOnXz8q0Bdcu3kkiN5YK6kL4I0j52kkAk+QHOKq+vfEHRdEhke7vlvjIpLQQIjqcjBDE8dCQc+9aW2UaXp5YV5BBEO+CTQYKur8gjpjHpV57KfFL9lxpFqtuz44MyLnB9SKo2sPaS6hd3Gn2q21vLKWjgDFhGueACecDpUc0jyY8HAPzrCcFLsvjyyxu4noKH4x9n4sSi5iGBnAXmqt2y+NcmrQG00ZGiD8NcuuDj/aP5mssZVMSMofvdx3DA24/rSZCgjvTuPki88+9ZxwxTNsmsySVDq4v2mldjNJIzHLsMkk+5NIm4lt1JWJUBOeuSa5QQN7gIo6L6UvZwfapVeQZXPGelbnIO9Nj1G9BdTGioM4cnOK2z4f6/HY6P9j1q43NG/8Ah5VjJCIR0JGfPzrJLGcRM/GAwwRUxZ6s8Crscrt6YNX2JqmFJp2jcRfWd28my5juIwh2ojZC9eT55xSksMt3GncxkRsyhlbkvxzx/Osdg7TSKdzhWbpuxz+dTtn20uAUCXsibOiynvU/I8j6Gs3p14zX7f1Gow2sVrcKmHR1AZmZgvHGTn64qO1aGee4ZVklZx4wsTL4AR+mTnp6Vluodsu0V3ODB2gt4bdyVyLeMqp8vFjP5j61O/DXTNUUXGp6hdTTy3Th2kJzkAHGcdOvSsp4tqstDI5OiVs9XFrLe20ke/YxYrjwN4eo/rnFIWsct3cyLFIyLJhirrjjjjGf/ZoLTfJLq06OkamQxl3xhenhAHU9Tj5UEUk0MomyrMnHiBIBx+FfcDHX+VUNBIdmrS4RGZ7oQRuR9kWMopBBy4IOCchRg9MDnyq06dajT9P1C1RphK0v3EN3EJF7sjjaPTbjqD/Gj6XPbaZZmG5kM+rRu0kby8pCmSeAfxMc+fFQmpa7alpA9xNcXE4AaQOe8IPXG3p+da8GVUT+vTNq+nvaTRzXQDLEBtjjdxwVJIx1xjjoc8YxSVh2OsW1L7Tb2c0qxTEozsBtweBg9ME8GmGmaT2iu4UXTdIu4ULBzLN93k8eLLnJPAru03wt7Xdo7OGAXljauspdpO/fdgrjB2KOPOrqLlxRDkl0SUvYe2utduLzUI7rbcncxRgdhzwOo4x/CoPtND2c7Hq6RCZZyMdx3mWOc4ckk7eCOvvVN7YfBvV+xWhtrWqa/Dcxq6I0KSS5lZjwq5+RJJ8hVDuL6WY7S5IHFXUK7KbrLd2h7fajrO2OSc7EG1ccYHTPz96qd3ePPGfG2w56nnHmaYvMSpx1PH50ErhgEH4cYqbKjGWFpYe9QbDuJ2j04wP/AHrTOVhnDHax5zUuh+5wASck8CmDQNKxURlj5AVVoD3StOs7rSrya51L7NLCv3MQA++b5ny8uKiy8cJJHLetLLZ3Ayqkqo6gc4o0Om7ZQTlsc8mq0TYEFu02HlYgeSe1SkJCYC4wPSk0gfONrev4aXjt3KggMD7kCrpEBQ5BJ9yaUW4IA61zW5KggjgnOW/6oq2xJ52gH3PFSBZbnJ4JpR7p1Twk5NIJb444z/yNAAY3EbEDcOOc0IHdvfYb8CkMMMpHDCtK+G+vNaSfsqJnkiuSGgQOAY35yuW4weufLBrK+5dW4kDGpjQNVfS76Gf8LxurqfQg1DVqi0XTs1LSbWVtQu4JhuPeliWYnAPOfc48/ShuVt9wMcbNGJFYb/CuPMkeQNN9I1We5klLIk/fS+IE4O0jPl5f+86dTu8cywoENpK+GKggswzk4Hl8vSuSjq7L5pvwtg7vGs6lc3gPJhhPdRn545P51atO7P6To6kafp1vbkjBKJ4m+Z6mnu5iM5OPM46UOSw4kGfbk16EYKPSOJybDLgnrXbgPnRFdVbDNk+mK4MCQAevmauQYb/aY7Q7INM0VG6B7uTHlnwoP0Y/WsKcmJAzLg4yQferT8YO0396O2GpXqEfZlcQwgf6EG0H69frVQll3ImeuATWM3yWQrHGCQSR60rKFUFhngdAaZLcHP4X9+KcknaVI5x09KqSciqiDcAeM0XqvhwM+fpXSttiIHXpSTRXD47vZj/ccbfpQDgSKkeBgYFBD4huzjJ55psIpEBV5A+fNego0DDbgmgHykJ0FBuPmcUVcYAzRWQZyWI+RqQGEyhMscc02kvgThWHB5Aqydj+y9t2kh15WikludP02S+iIfCjY6biwPUbSeB6+1V298ELKuPCcgqMVFgMt0WXcaQWYvcsSegxSRuAAox+LjNJpJ943qWqLBLI25ciloyUYPuIpnbyZGM0rK5CgnAHrVgX/srqMstutvBHnDgyqM8oMny6VLftWa3ljd7eXCbmdWzgegH5is37P69PpmowzRDKK43huARW5xw6Ne2wZb37QZzvZDMsZHPI5PGK5ssXdxOjFLimbF3hJ/y3x58cZo3KnOM+vHIFNgG3bo5YwOSQ2WJ+uaMHUAlVQ5PJHIP5V3nKLAkDJz6AVA9u9a/YfY/Vr8SiOSK2ZIiR/wDRhtUD3yf0qXwwbOAp6cA155+Ovb39qaq2g2ku61sWKuVPEk37x+n4R9aXXIMfv375nPkeKaq57pM9cAZo9wCpZ92QeabxMCqj0Nc5YsE8ltHollDBdGSeaeSW5hUYWIKAqZPmSNx9gR70x3Y8803iZs5PkM/mf+qNvwc0AM8hwPUkCgMjKDgEnz5okh3OhBBBYZzSmGdgi7iOuKAIC3d5bAyeB50EHQZ6D9TSsgMYywUn59PnScbYQZ+WakDlHyeaPkk5x8sU1Nwq4VQSfSlO9wmXAB+fNAO7C8vLS7lS1uZbb7RH3btG2N6kdD7ZApnK4lg6dR+XtRJpSWikzjqB8+tEj3bMsTvBOfzpYG7DNuf9QG4Gk4DuJalCxGUIIxn603t3CsAenPPpVQP4Z8HGcKeM1I2xjQ/eNknzPJqIWcLnaOP9R60rBKTyTgeXrUpgnkt4H8UJUv6OcE/I+VXbsbY2+tRTRXMLi5tRueQNh5Iz0HJwTnjPnWcCYGIMG2/Opfs32jvND1CC7uLZpbaM7TydpB8jjyzj8qTVqi0HTPZW19+EkbdgbgzcGhTvWJLLsVRwM5B96IyZ4MYwD4SGOf6UEcsEuc7SRwQTuH9K6DIh+219qmm9j9YvNICtfW9q7wlhnB82A8yBkj5V4ru76eednnJ3MSdxPU16/wDix2i/u92IvpbcmO4ux9lhI4wXBBP0UGvId1FuJDYz06dazyFkNJJJW8O8r6YPBokBwTkjIbPHnXM2wbWQbvI+tJxk98c8eHpWJJIliN2ASc44GfKkmMp5CMMeZpxBt2HcM+I0qNg6ImPYVYDBC5mTw4BPQ4p4I9iE7tinqR1NJ7VMq4GOpyBSx3FvJm8s8haICLHMZIBVQOp865o2baBknywPKjztgbSSWxyfWlIiqg4Bz6mpAQWrj91vXOQKMtpuQg8EeW/r+lKB3zxRFkIJLcE04AjPC0SZIbqCPFQFu9ZtzFWyDn14/wCqUuDvQrnORSAlDKgxzg59+f8AuoAlOjgEqcj5dKYFiH6Y5qSY8kD+FMLmMAll8uuKqwHQ7uCeKcRyAnrjFM43ytGBeQ4XIHrQEtb3MP4pCvhPnUxbapCDtWQLnjOP61WUiWIg4LN8qfQMqgb7ZnJ6Kep+lWTB/9k=",
-            "William Soh": "data:image/jpeg;base64,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"
+            "Daniel Soh": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+            "William Soh": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
         };
 
-        // Ativa 照片（已内嵌，无需上传 images 文件夹）
-        const ativaImgs = [
-            "images/ativa-1.jpg",
-            "images/ativa-2.jpg",
-            "images/ativa-3.jpg",
-            "images/ativa-4.jpg",
-            "images/ativa-5.jpg",
-            "images/ativa-6.jpg"
-        ];
-        const ativaCaps = ["Front 3/4 view", "Rear 3/4 view", "Steering & dashboard", "Front seat (half leather)", "Rear seats", "Engine bay"];
-
-        // Forester 照片（已内嵌）
-        const foresterImgs = [
-            "images/forester-1.jpg",
-            "images/forester-2.jpg",
-            "images/forester-3.jpg",
-            "images/forester-4.jpg",
-            "images/forester-5.jpg",
-            "images/forester-6.jpg"
-        ];
-        const foresterCaps = ["Front 3/4 view", "Rear 3/4 view", "Steering & driver controls", "Front leather seats", "Odometer: 140,607 km", "2.0L Boxer engine bay"];
-
-        // Bezza 照片（已内嵌）
-        const bezzaImgs = [
-            "images/bezza-1.jpg",
-            "images/bezza-2.jpg",
-            "images/bezza-3.jpg",
-            "images/bezza-4.jpg",
-            "images/bezza-5.jpg",
-            "images/bezza-6.jpg"
-        ];
-        const bezzaCaps = ["Front 3/4 view", "Rear 3/4 view", "Dashboard & steering", "Front seats", "Rear seats", "Odometer: 75,222 km"];
-
-        const cars = [
-            {
-                id: 9,
-                name: "Perodua Bezza 1.3 Premium X (A)",
-                make: "Perodua",
-                body: "Sedan",
-                year: 2023,
-                price: 34800,
-                mileage: "75,222 km", // 依照里程表照片
-                transmission: "Automatic",
-                engine: "1.3L Dual VVT-i",
-                monthly: 464, // 估算：10% 首期、7 年、3.5% 利率（与贷款计算器默认值一致）
-                badge: "Warranty Until 2028",
-                tag: "Local",
-                image: bezzaImgs[0],
-                gallery: bezzaImgs,
-                captions: bezzaCaps,
-                contacts: [
-                    { name: "Daniel Soh", phone: "60123858996", display: "012-385 8996" },
-                    { name: "William Soh", phone: "60123230396", display: "012-323 0396" }
-                ],
-                features: ["Perodua Warranty Until 2028", "1 Careful Owner, 100% Accident Free", "100% Original Paint, No Repair Needed", "Fully Service, Aircond Cold, Smooth Engine & Gearbox", "Push Start", "Free Tinted Voucher & Free Test Drive", "CCRIS / CTOS / AKPK / Blacklist - Contact Our Sales Consultants", "Cash Buyers Welcome"]
-            },
-            {
-                id: 7,
-                name: "Perodua Ativa 1.0 Turbo AV (Advance)",
-                make: "Perodua",
-                body: "SUV",
-                year: 2023,
-                price: null, // TODO: 填写售价，例如 78800；留空则显示 "Call for Price"
-                mileage: "Call for details", // TODO: 填写里程，例如 "35,000 km"
-                transmission: "CVT",
-                engine: "1.0L Turbo",
-                monthly: null, // TODO: 填写月供，例如 960
-                badge: "Warranty Until 2028",
-                tag: "Local",
-                image: ativaImgs[0],
-                gallery: ativaImgs,
-                captions: ativaCaps,
-                contacts: [
-                    { name: "Daniel Soh", phone: "60123858996", display: "012-385 8996" },
-                    { name: "William Soh", phone: "60123230396", display: "012-323 0396" }
-                ],
-                features: ["Full Loan Available / Cash Out Boleh", "AKPK Can Loan", "Fully Service Perodua, Warranty Until 2028", "Careful Owner, 100% No Accident & No Banjir", "Push Start, Smart Entry, Half Leather, Reverse Camera"]
-            },
-            {
-                id: 8,
-                name: "Subaru Forester 2.0i-P Premium (A)",
-                make: "Subaru",
-                body: "SUV",
-                year: 2016,
-                price: null, // TODO: 填写售价，例如 68800；留空则显示 "Call for Price"
-                mileage: "140,607 km", // 依照仪表板照片；如需修改请更新
-                transmission: "CVT",
-                engine: "2.0L Boxer AWD",
-                monthly: null, // TODO: 填写月供
-                badge: "All Can Loan",
-                tag: "Japanese",
-                image: foresterImgs[0],
-                gallery: foresterImgs,
-                captions: foresterCaps,
-                contacts: [
-                    { name: "Daniel Soh", phone: "60123858996", display: "012-385 8996" },
-                    { name: "William Soh", phone: "60123230396", display: "012-323 0396" }
-                ],
-                features: ["AKPK / CCRIS / CTOS / Blacklist - All Can Loan, Full Loan Available", "Fully Service", "Leather Seat, Electric Seat (Driver & Passenger)", "Paddle Shift, Power Boot", "Keyless, Smart Entry, Push Start", "360° Surround Camera"]
-            }
-        ];
-
-        // Render Inventory
-        function renderCars(data) {
+        // 从云端加载在售车辆
+        async function fetchCarsFromCloud() {
             const container = document.getElementById('car-grid');
-            container.innerHTML = '';
-
-            if (data.length === 0) {
-                container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 font-medium">No matching vehicles found. Please adjust filters.</div>`;
+            const { data, error } = await supabaseClient
+                .from('cars')
+                .select('*')
+                .eq('status', 'available')
+                .order('id', { ascending: false });
+            
+            if (error) {
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-red-500">Failed to load cars: ${error.message}</div>`;
                 return;
             }
 
-            data.forEach(car => {
-                const card = `
+            allCars = data || [];
+            renderCars(allCars);
+        }
+
+        // 渲染车辆列表
+        function renderCars(data) {
+            const container = document.getElementById('car-grid');
+            if (data.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 font-medium">No vehicles currently available in showroom. Check back soon!</div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(car => {
+                const images = car.Images || [];
+                const mainImg = images[0] || 'https://placehold.co/800x500/0F172A/FFF?text=No+Image';
+                return `
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col group">
-                        <div class="relative overflow-hidden h-56 bg-gray-200 cursor-pointer" onclick="openViewer(${car.id}, 0)" title="Click to view all photos">
-                            <img src="${car.image}" alt="${car.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/800x500/0F172A/FFF?text=${encodeURIComponent(car.name)}'">
+                        <div class="relative overflow-hidden h-56 bg-gray-200 cursor-pointer" onclick="openModal(${car.id})" title="Click to view all photos">
+                            <img src="${mainImg}" alt="${car.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition pointer-events-none"></div>
                             <span class="absolute bottom-3 left-3 text-white text-xs font-semibold flex items-center gap-1.5 pointer-events-none"><i class="fa-solid fa-expand"></i> Tap to view car condition</span>
-                            <span class="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-2.5 py-1 rounded-full pointer-events-none"><i class="fa-solid fa-camera mr-1"></i>${(car.gallery || [car.image]).length}</span>
+                            <span class="absolute bottom-3 right-3 bg-black/70 text-white text-xs font-bold px-2.5 py-1 rounded-full pointer-events-none"><i class="fa-solid fa-camera mr-1"></i>${images.length}</span>
                             <span class="absolute top-3 left-3 bg-navy-900 text-amber-400 text-xs font-bold px-3 py-1 rounded-full shadow">
-                                ${car.badge}
+                                ${car.badge || 'Verified'}
                             </span>
                         </div>
                         <div class="p-5 flex-1 flex flex-col justify-between">
@@ -765,7 +688,7 @@
                             <div class="pt-4 border-t border-gray-100 mt-4 flex items-center justify-between">
                                 <div>
                                     <span class="text-xs text-gray-400">Cash Price:</span>
-                                    <div class="text-xl font-extrabold text-navy-900">${car.price ? `RM ${car.price.toLocaleString()}` : "Call for Price"}</div>
+                                    <div class="text-xl font-extrabold text-navy-900">RM ${car.price?.toLocaleString()}</div>
                                 </div>
                                 <div class="text-right">
                                     <span class="text-xs text-gray-400">Est. Monthly:</span>
@@ -777,47 +700,41 @@
                                 <button onclick="openModal(${car.id})" class="bg-gray-100 hover:bg-gray-200 text-navy-900 font-semibold py-2 rounded-lg text-xs transition">
                                     View Details
                                 </button>
-                                <a href="https://wa.me/60123456789?text=Hi%20JWD%20Autoworld,%20I%20am%20interested%20in%20the%20${encodeURIComponent(car.name)}%20${car.price ? `%20(RM%20${car.price})` : ""}" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-2 rounded-lg text-xs transition text-center flex items-center justify-center">
+                                <a href="https://wa.me/60123456789?text=Hi%20JWD%20Autoworld,%20I%20am%20interested%20in%20the%20${encodeURIComponent(car.name)}%20(RM%20${car.price})" target="_blank" class="bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold py-2 rounded-lg text-xs transition text-center flex items-center justify-center">
                                     <i class="fa-brands fa-whatsapp mr-1"></i> Inquire
                                 </a>
                             </div>
                         </div>
                     </div>
                 `;
-                container.innerHTML += card;
-            });
+            }).join('');
         }
 
-        // Inventory Filter Buttons
-        function filterInventory(category) {
-            document.querySelectorAll('.inv-tab').forEach(btn => {
-                btn.classList.remove('bg-navy-900', 'text-white');
-                btn.classList.add('bg-white', 'text-gray-700');
+        // 分类筛选
+        function filterInventory(category, btn) {
+            document.querySelectorAll('.inv-tab').forEach(el => {
+                el.classList.remove('bg-navy-900', 'text-white');
+                el.classList.add('bg-white', 'text-gray-700');
             });
-
-            event.target.classList.remove('bg-white', 'text-gray-700');
-            event.target.classList.add('bg-navy-900', 'text-white');
+            if(btn) {
+                btn.classList.remove('bg-white', 'text-gray-700');
+                btn.classList.add('bg-navy-900', 'text-white');
+            }
 
             if (category === 'All') {
-                renderCars(cars);
-            } else if (category === 'Under30k') {
-                renderCars(cars.filter(c => c.price && c.price <= 30000));
-            } else if (category === 'SUV') {
-                renderCars(cars.filter(c => c.body === 'SUV' || c.body === 'MPV'));
-            } else if (category === 'Local') {
-                renderCars(cars.filter(c => c.tag === 'Local'));
-            } else if (category === 'Japanese') {
-                renderCars(cars.filter(c => c.tag === 'Japanese'));
+                renderCars(allCars);
+            } else {
+                renderCars(allCars.filter(c => c.tag === category));
             }
         }
 
-        // Hero Filter Logic
+        // 首页搜索框筛选
         function applyHeroFilter() {
             const make = document.getElementById('hero-make').value;
             const body = document.getElementById('hero-body').value;
             const budget = document.getElementById('hero-budget').value;
 
-            let filtered = cars;
+            let filtered = allCars;
             if (make !== 'All') filtered = filtered.filter(c => c.make === make);
             if (body !== 'All') filtered = filtered.filter(c => c.body === body);
             if (budget !== 'All') filtered = filtered.filter(c => c.price && c.price <= parseInt(budget));
@@ -826,7 +743,7 @@
             document.getElementById('inventory').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Loan Calculator Logic
+        // 贷款计算器逻辑
         function calculateLoan() {
             const price = parseFloat(document.getElementById('calc-price').value);
             const dp = parseFloat(document.getElementById('calc-dp').value);
@@ -848,41 +765,60 @@
             document.getElementById('calc-total-interest').innerText = `RM ${Math.round(totalInterest).toLocaleString()}`;
         }
 
-        // Car Modal Control
+        // 车辆详情模态框
+        let modalCarId = null, modalIdx = 0;
         function openModal(carId) {
-            const car = cars.find(c => c.id === carId);
+            const car = allCars.find(c => c.id === carId);
             if (!car) return;
+            modalCarId = car.id;
+            const images = car.Images || [];
 
             document.getElementById('modal-title').innerText = car.name;
-            document.getElementById('modal-img').src = car.image;
             document.getElementById('modal-year').innerText = car.year;
             document.getElementById('modal-mileage').innerText = car.mileage;
             document.getElementById('modal-trans').innerText = car.transmission;
             document.getElementById('modal-engine').innerText = car.engine;
-            document.getElementById('modal-price').innerText = car.price ? `RM ${car.price.toLocaleString()}` : 'Call for Price';
+            document.getElementById('modal-price').innerText = `RM ${car.price?.toLocaleString()}`;
             document.getElementById('modal-installment').innerText = car.monthly ? `RM ${car.monthly} / month` : 'Ask for quote';
-            const contacts = car.contacts || [{ name: "Sales", phone: "60123456789", display: "012-345 6789" }];
+            
+            const contacts = [
+                { name: "Daniel Soh", phone: "60123858996", display: "012-385 8996" },
+                { name: "William Soh", phone: "60123230396", display: "012-323 0396" }
+            ];
             const waText = encodeURIComponent(`Hi JWD Autoworld, I would like to book a test drive for ${car.name}`);
             document.getElementById('modal-contacts').innerHTML = contacts.map(c => `
-                <div class="flex-1 flex rounded-lg overflow-hidden shadow-sm">
+                <div class="flex-1 flex rounded-lg overflow-hidden shadow-sm border">
                     <a href="https://wa.me/${c.phone}?text=${waText}" target="_blank" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 text-sm transition flex items-center gap-3">
-                        ${salesPhotos[c.name] ? `<img src="${salesPhotos[c.name]}" alt="${c.name}" class="w-11 h-11 rounded-full object-cover border-2 border-white/80 flex-shrink-0">` : '<i class="fa-brands fa-whatsapp text-xl"></i>'}
+                        <img src="${salesPhotos[c.name]}" alt="${c.name}" class="w-10 h-10 rounded-full object-cover border-2 border-white/80 flex-shrink-0">
                         <span class="text-left leading-tight">${c.name}<span class="block text-[11px] font-medium opacity-90"><i class="fa-brands fa-whatsapp mr-1"></i>${c.display}</span></span>
                     </a>
-                    <a href="tel:+${c.phone}" class="bg-navy-900 hover:bg-slate-800 text-amber-400 px-4 flex items-center" aria-label="Call ${c.name}"><i class="fa-solid fa-phone"></i></a>
+                    <a href="tel:+${c.phone}" class="bg-navy-900 hover:bg-slate-800 text-amber-400 px-4 flex items-center"><i class="fa-solid fa-phone"></i></a>
                 </div>`).join('');
 
-            modalCarId = car.id;
-            const pics = carPics(car);
-            document.getElementById('modal-gallery').innerHTML = pics.length > 1 ? pics.map((p, i) => `<img src="${p}" alt="${carCap(car, i)}" loading="lazy" onclick="setModalPhoto(${i})" class="modal-thumb h-14 w-20 object-cover rounded-md cursor-pointer flex-shrink-0 border-2 border-transparent transition">`).join('') : '';
-            setModalPhoto(0);
-            if (car.features) {
+            if (car.features && car.features.length > 0) {
                 document.getElementById('modal-features').innerHTML = car.features.map(f => `<li>${f}</li>`).join('');
             }
 
+            document.getElementById('modal-gallery').innerHTML = images.map((img, i) => `
+                <img src="${img}" onclick="setModalPhoto(${i})" class="modal-thumb h-14 w-20 object-cover rounded-md cursor-pointer flex-shrink-0 border-2 border-transparent transition">
+            `).join('');
+
+            setModalPhoto(0);
             const modal = document.getElementById('car-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+        }
+
+        function setModalPhoto(i) {
+            const car = allCars.find(c => c.id === modalCarId);
+            const images = car.Images || [];
+            modalIdx = i;
+            document.getElementById('modal-img').src = images[i] || '';
+            document.getElementById('modal-count').innerText = `${i + 1} / ${images.length}`;
+            document.querySelectorAll('#modal-gallery .modal-thumb').forEach((el, k) => {
+                el.classList.toggle('border-amber-500', k === i);
+                el.classList.toggle('opacity-60', k !== i);
+            });
         }
 
         function closeModal() {
@@ -891,18 +827,20 @@
             modal.classList.remove('flex');
         }
 
-        // Trade-In Form Submission Handler
-        let tradeInMessage = '';
+        // Trade-in 表单处理
         function handleTradeInSubmit(e) {
             e.preventDefault();
             const inputs = e.target.querySelectorAll('input');
             const model = inputs[0].value, year = inputs[1].value, mileage = inputs[2].value || '-', name = inputs[3].value, phone = inputs[4].value;
-            tradeInMessage = `Hi JWD Autoworld, I would like to get a valuation for my car:\n- Model: ${model}\n- Year: ${year}\n- Mileage: ${mileage}\n- Owner: ${name}\n- Contact: ${phone}`;
-
-            openSalesChooser(tradeInMessage, 'Who would you like to send your car valuation request to via WhatsApp?');
+            const msg = `Hi JWD Autoworld, I would like to get a valuation for my car:\n- Model: ${model}\n- Year: ${year}\n- Mileage: ${mileage}\n- Owner: ${name}\n- Contact: ${phone}`;
+            openSalesChooser(msg, 'Who would you like to send your car valuation request to via WhatsApp?');
         }
 
-        // Reusable popup: choose Daniel or William, then open WhatsApp with the message
+        function openLoanChooser() {
+            const msg = `Hi JWD Autoworld, I would like to apply for a car loan pre-approval:\n- Car price: ${document.getElementById('calc-price-val').innerText}\n- Downpayment: ${document.getElementById('calc-dp-val').innerText}\n- Tenure: ${document.getElementById('calc-tenure-val').innerText}\n- Interest rate: ${document.getElementById('calc-rate-val').innerText}\n- Est. monthly: ${document.getElementById('calc-monthly').innerText}`;
+            openSalesChooser(msg, 'Who would you like to send your loan pre-check request to via WhatsApp?');
+        }
+
         function openSalesChooser(message, description) {
             const team = [
                 { name: "Daniel Soh", phone: "60123858996", display: "012-385 8996" },
@@ -924,125 +862,12 @@
             modal.classList.add('flex');
         }
 
-        // Loan pre-check button
-        function openLoanChooser() {
-            const msg = `Hi JWD Autoworld, I would like to apply for a car loan pre-approval:\n- Car price: ${document.getElementById('calc-price-val').innerText}\n- Downpayment: ${document.getElementById('calc-dp-val').innerText}\n- Tenure: ${document.getElementById('calc-tenure-val').innerText}\n- Interest rate: ${document.getElementById('calc-rate-val').innerText}\n- Est. monthly: ${document.getElementById('calc-monthly').innerText}`;
-            openSalesChooser(msg, 'Who would you like to send your loan pre-check request to via WhatsApp?');
-        }
-
         function closeTradeInModal() {
-            const modal = document.getElementById('tradein-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            document.getElementById('tradein-modal').classList.add('hidden');
+            document.getElementById('tradein-modal').classList.remove('flex');
         }
 
-        // ===== Photo gallery & viewer =====
-        let modalCarId = null, modalIdx = 0, viewerCar = null, viewerIdx = 0, viewerZoom = false, swipeX = null, swiped = false;
-        function carPics(car) { return car.gallery && car.gallery.length ? car.gallery : [car.image]; }
-        function carCap(car, i) { return (car.captions && car.captions[i]) || ''; }
-
-        function setModalPhoto(i) {
-            const car = cars.find(c => c.id === modalCarId);
-            const pics = carPics(car);
-            modalIdx = i;
-            document.getElementById('modal-img').src = pics[i];
-            document.getElementById('modal-count').innerText = `${i + 1} / ${pics.length}`;
-            document.querySelectorAll('#modal-gallery .modal-thumb').forEach((el, k) => {
-                el.classList.toggle('border-amber-500', k === i);
-                el.classList.toggle('opacity-60', k !== i);
-            });
-        }
-
-        function openViewer(carId, idx) {
-            const car = cars.find(c => c.id === carId);
-            if (!car) return;
-            viewerCar = car;
-            document.getElementById('viewer-title').innerText = car.name;
-            document.getElementById('viewer-thumbs').innerHTML = carPics(car).map((p, i) => `<img src="${p}" alt="${carCap(car, i)}" loading="lazy" onclick="showViewerPhoto(${i})" class="viewer-thumb h-14 w-20 object-cover rounded-md cursor-pointer flex-shrink-0 border-2 border-transparent transition">`).join('');
-            const v = document.getElementById('photo-viewer');
-            v.classList.remove('hidden'); v.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-            showViewerPhoto(idx || 0);
-        }
-
-        function showViewerPhoto(i) {
-            const pics = carPics(viewerCar);
-            viewerIdx = (i + pics.length) % pics.length;
-            resetZoom();
-            document.getElementById('viewer-img').src = pics[viewerIdx];
-            document.getElementById('viewer-caption').innerText = carCap(viewerCar, viewerIdx) || 'Photo';
-            document.getElementById('viewer-counter').innerText = `${viewerIdx + 1} / ${pics.length}`;
-            document.querySelectorAll('#viewer-thumbs .viewer-thumb').forEach((el, k) => {
-                el.classList.toggle('border-amber-500', k === viewerIdx);
-                el.classList.toggle('opacity-50', k !== viewerIdx);
-                if (k === viewerIdx) el.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
-            });
-        }
-
-        function stepViewer(d) { showViewerPhoto(viewerIdx + d); }
-
-        function resetZoom() {
-            const img = document.getElementById('viewer-img');
-            img.style.transform = ''; img.style.transformOrigin = '';
-            img.classList.add('cursor-zoom-in'); img.classList.remove('cursor-zoom-out');
-            viewerZoom = false;
-        }
-
-        function toggleZoom(e) {
-            if (swiped) { swiped = false; return; }
-            if (viewerZoom) { resetZoom(); return; }
-            const img = document.getElementById('viewer-img');
-            const r = img.getBoundingClientRect();
-            img.style.transformOrigin = `${(e.clientX - r.left) / r.width * 100}% ${(e.clientY - r.top) / r.height * 100}%`;
-            img.style.transform = 'scale(2.4)';
-            img.classList.remove('cursor-zoom-in'); img.classList.add('cursor-zoom-out');
-            viewerZoom = true;
-        }
-
-        function closeViewer() {
-            const v = document.getElementById('photo-viewer');
-            v.classList.add('hidden'); v.classList.remove('flex');
-            document.body.style.overflow = '';
-            resetZoom();
-        }
-
-        function viewerToDetails() {
-            const id = viewerCar.id;
-            closeViewer();
-            openModal(id);
-        }
-
-        // Zoomed: move mouse to pan. Not zoomed: swipe left/right to change photo.
-        (function () {
-            const stage = document.getElementById('viewer-stage');
-            const img = document.getElementById('viewer-img');
-            stage.addEventListener('mousemove', e => {
-                if (!viewerZoom) return;
-                const r = stage.getBoundingClientRect();
-                img.style.transformOrigin = `${(e.clientX - r.left) / r.width * 100}% ${(e.clientY - r.top) / r.height * 100}%`;
-            });
-            stage.addEventListener('touchstart', e => { swipeX = e.touches[0].clientX; swiped = false; }, { passive: true });
-            stage.addEventListener('touchend', e => {
-                if (swipeX === null || viewerZoom) { swipeX = null; return; }
-                const dx = e.changedTouches[0].clientX - swipeX;
-                swipeX = null;
-                if (Math.abs(dx) > 50) { swiped = true; stepViewer(dx < 0 ? 1 : -1); }
-            });
-            document.addEventListener('keydown', e => {
-                if (document.getElementById('photo-viewer').classList.contains('hidden')) return;
-                if (e.key === 'Escape') closeViewer();
-                else if (e.key === 'ArrowRight') stepViewer(1);
-                else if (e.key === 'ArrowLeft') stepViewer(-1);
-            });
-        })();
-
-        // Mobile Menu Toggle
-        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        });
-
-        // Sales team cards (Contact section)
+        // 渲染销售团队
         function renderSalesTeam() {
             const team = [
                 { name: "Daniel Soh", phone: "60123858996", display: "012-385 8996" },
@@ -1060,9 +885,14 @@
                 </div>`).join('');
         }
 
-        // Initialize Page
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // 页面初始化
         window.onload = function() {
-            renderCars(cars);
+            fetchCarsFromCloud();
             calculateLoan();
             renderSalesTeam();
         };
