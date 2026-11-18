@@ -46,11 +46,11 @@
             <form id="add-car-form" onsubmit="handlePublishCar(event)" class="space-y-4">
                 <div class="grid sm:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Car Name & Model * (e.g. Honda City 1.5)</label>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Car Name & Model *</label>
                         <input type="text" id="c-name" required oninput="autoFillBrand(this.value)" placeholder="e.g. Perodua Bezza 1.3 AV" class="w-full bg-slate-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-1">Make / Brand * (Auto or manual input)</label>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Make / Brand *</label>
                         <input type="text" id="c-make" required placeholder="e.g. Honda, BMW, Perodua" class="w-full bg-slate-900 border border-gray-700 rounded-lg p-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-amber-500">
                     </div>
                     <div>
@@ -123,12 +123,10 @@
 
         const ADMIN_PIN = '123456';
 
-        // 自动根据车名字段提取品牌填充到 Brand 框
         function autoFillBrand(nameVal) {
             const parts = nameVal.trim().split(' ');
             if (parts.length > 0 && parts[0]) {
                 const brandInput = document.getElementById('c-make');
-                // 如果用户没手动瞎改，或者想让它智能联想，可以直接填入第一个词作为品牌首字母大写
                 const suggested = parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase();
                 brandInput.value = suggested;
             }
@@ -206,10 +204,11 @@
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
                     const fileName = `${Date.now()}-${i}-${file.name.replace(/[^a-zA-Z0-9.]/g, '')}`;
-                    const { error } = await supabaseClient.storage.from('car-photos').upload(fileName, file);
+                    // 这里的 storage bucket 改为了你在后台创建的 car-photo
+                    const { error } = await supabaseClient.storage.from('car-photo').upload(fileName, file);
                     if (error) throw error;
 
-                    const { data: publicURL } = supabaseClient.storage.from('car-photos').getPublicUrl(fileName);
+                    const { data: publicURL } = supabaseClient.storage.from('car-photo').getPublicUrl(fileName);
                     imageUrls.push(publicURL.publicUrl);
                 }
 
@@ -221,7 +220,6 @@
 
                 const make = document.getElementById('c-make').value.trim();
                 const lowerMake = make.toLowerCase();
-                // 自动判断标签：本地车(Perodua/Proton)分到 Local，其他分到 Japanese 或通用
                 const autoTag = (lowerMake.includes('perodua') || lowerMake.includes('proton')) ? 'Local' : 'Japanese';
 
                 const newCar = {
